@@ -6,3 +6,4 @@ df.columns = df.columns.str.strip('_') --remove _ at end of column header
 df['cancel_date'] = pd.to_datetime(df.cancel_date)
 df['created_date'] = pd.to_datetime(df.created_date)
 df['initial_trial_end_date'] = pd.to_datetime(df.initial_trial_end_date)
+df.drop_duplicates(subset=['account_id'], keep='first') -- remove duplicates keep the first record
