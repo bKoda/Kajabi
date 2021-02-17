@@ -1,3 +1,8 @@
+-- change dates of missing values to null
+update data_analyst_challenge set cancel_date = NULL where cancel_date = ''
+update data_analyst_challenge set cancel_date = str_to_date(cancel_date, '%m/%d/%Y');
+
+
 -- Find rate of accounts that activate
 
 WITH activations AS 
