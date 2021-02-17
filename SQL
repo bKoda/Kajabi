@@ -20,7 +20,7 @@ ORDER BY 1
 
 SELECT
 	activations.month,
-    	(activated/(activated + not_activated)) AS activated_rate
+    	(activated/(activated + not_activated)) * 100 AS activated_rate
 FROM
 	activations
 GROUP BY 1
