@@ -3,7 +3,7 @@ update member_a set cancel_date = NULL where cancel_date = '';
 update member_a set cancel_date = str_to_date(cancel_date, '%Y-%m-%d');
 
 
--- Find rate of accounts that activate
+-- Find rate of accounts that activate by month
 
 WITH activations AS 
 (
