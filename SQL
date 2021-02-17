@@ -5,22 +5,82 @@ update member_a set cancel_date = str_to_date(cancel_date, '%Y-%m-%d');
 
 -- Find rate of accounts that activate by month
 
+-- counting activated vs non activated accs
 WITH activations AS 
 (
 SELECT
-	MIN(created_date) AS month,
-        SUM(CASE WHEN has_activated LIKE 'Yes' THEN 1 ELSE 0 END) AS activated,
-        SUM(CASE WHEN has_activated LIKE 'No' THEN 1 ELSE 0 END) AS not_activated
+	MIN(created_date) as month,
+        SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) as activated,
+        SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) as not_activated
 FROM
 	member_a
 GROUP BY 
 	MONTH(created_date)
-ORDER BY 1
+),
+
+-- count unique accs created
+accounts_created AS
+(
+SELECT
+	COUNT(DISTINCT account_id) AS num_acc,
+        MIN(created_date) AS start_month
+FROM
+	member_a
+GROUP BY 
+	MONTH(created_date)
 )
 
 SELECT
 	activations.month,
-    	(activated/(activated + not_activated)) * 100 AS activated_rate
+        (activated/(activated + not_activated))*100 AS activated_rate,
+        num_acc
 FROM
 	activations
+		JOIN accounts_created ON activations.month = accounts_created.start_month
+GROUP BY 1;
+
+
+
+
+
+
+
+-- Active users by experience
+
+--all users by experience
+WITH total_users AS (
+
+SELECT
+	count(account_id) AS num_users,
+        experience
+FROM 
+	member_a
+WHERE 
+	experience NOT LIKE ''
+GROUP BY
+	2
+),
+
+--count of all active users
+active_users AS
+(
+SELECT
+	count(account_id) AS num_users,
+        experience
+FROM 
+	member_a
+WHERE 
+	experience NOT LIKE '' -- should be IS NOT NULL
+        AND has_activated LIKE 'Yes'
+GROUP BY
+	2
+)
+
+SELECT
+	active_users.experience,
+        (active_users.num_users / total_users.num_users ) AS percent_active_users,
+        active_users.num_users
+FROM active_users
+	JOIN total_users ON total_users.experience = active_users.experience
 GROUP BY 1
+ORDER BY 2 DESC
