@@ -1,0 +1,8 @@
+df.columns = df.columns.str.replace(r"\(.*?\)","") -- cleans end of column headers
+df.columns = df.columns.str.replace(' ','_') --replace column header space with underscore
+df.columns = df.columns.str.lower() 
+df.columns = df.columns.str.lstrip('_') --remove _ at start of column header
+df.columns = df.columns.str.strip('_') --remove _ at end of column header
+df['cancel_date'] = pd.to_datetime(df.cancel_date)
+df['created_date'] = pd.to_datetime(df.created_date)
+df['initial_trial_end_date'] = pd.to_datetime(df.initial_trial_end_date)
