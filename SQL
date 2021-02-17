@@ -1,6 +1,6 @@
 -- change dates of missing values to null
-update member_a set cancel_date = NULL where cancel_date = ''
-update member_a set cancel_date = str_to_date(cancel_date, '%m/%d/%Y');
+update member_a set cancel_date = NULL where cancel_date = '';
+update member_a set cancel_date = str_to_date(cancel_date, '%Y-%m-%d');
 
 
 -- Find rate of accounts that activate
