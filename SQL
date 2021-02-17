@@ -1,6 +1,6 @@
 -- change dates of missing values to null
-update data_analyst_challenge set cancel_date = NULL where cancel_date = ''
-update data_analyst_challenge set cancel_date = str_to_date(cancel_date, '%m/%d/%Y');
+update member_a set cancel_date = NULL where cancel_date = ''
+update member_a set cancel_date = str_to_date(cancel_date, '%m/%d/%Y');
 
 
 -- Find rate of accounts that activate
@@ -8,18 +8,19 @@ update data_analyst_challenge set cancel_date = str_to_date(cancel_date, '%m/%d/
 WITH activations AS 
 (
 SELECT
-		    MIN(created_date) as month,
-        SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) as activated,
-        SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) as not_activated
+	MIN(created_date) AS month,
+        SUM(CASE WHEN has_activated LIKE 'Yes' THEN 1 ELSE 0 END) AS activated,
+        SUM(CASE WHEN has_activated LIKE 'No' THEN 1 ELSE 0 END) AS not_activated
 FROM
-		member_a
-GROUP BY MONTH(created_date)
+	member_a
+GROUP BY 
+	MONTH(created_date)
 ORDER BY 1
 )
 
 SELECT
-		activations.month,
-    (activated/(activated + not_activated)) as activated_rate
+	activations.month,
+    	(activated/(activated + not_activated)) AS activated_rate
 FROM
-		activations
+	activations
 GROUP BY 1
