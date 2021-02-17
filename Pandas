@@ -7,3 +7,6 @@ df['cancel_date'] = pd.to_datetime(df.cancel_date)
 df['created_date'] = pd.to_datetime(df.created_date)
 df['initial_trial_end_date'] = pd.to_datetime(df.initial_trial_end_date)
 df = df.drop_duplicates(subset=['account_id'], keep='first') -- remove duplicates keep the first record
+df['trial_activity_mins'] = df['trial_activity_mins'].fillna(0)
+df['created_offer_durring_trial'] = df['created_offer_durring_trial'].fillna("No")
+df['uploaded_video_durring_trial'] = df['uploaded_video_durring_trial'].fillna("No")
