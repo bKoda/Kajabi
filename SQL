@@ -3,41 +3,42 @@ update member_a set cancel_date = NULL where cancel_date = '';
 update member_a set cancel_date = str_to_date(cancel_date, '%Y-%m-%d');
 
 
--- Find rate of accounts that activate by month
+-- Trials and Activation %
 
 -- counting activated vs non activated accs
 WITH activations AS 
 (
 SELECT
-	MIN(created_date) AS month,
+		MIN(created_date) AS month,
         SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) AS activated,
         SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) AS not_activated
 FROM
-	member_a
+		member_a
 GROUP BY 
-	MONTH(created_date)
+		MONTH(created_date)
 ),
 
 -- count unique accs created
 accounts_created AS
 (
 SELECT
-	COUNT(DISTINCT account_id) AS num_acc,
+		COUNT(DISTINCT account_id) AS num_acc,
         MIN(created_date) AS start_month
 FROM
-	member_a
+		member_a
 GROUP BY 
-	MONTH(created_date)
+		MONTH(created_date)
 )
 
 SELECT
-	activations.month,
+		DATE_FORMAT(activations.month, '%b-%Y') as created_month,
         (activated/(activated + not_activated))*100 AS activated_rate,
         num_acc
 FROM
 	activations
 		JOIN accounts_created ON activations.month = accounts_created.start_month
-GROUP BY 1;
+GROUP BY 1
+ORDER BY MONTH(activations.month);
 
 
 
@@ -61,7 +62,7 @@ GROUP BY
 	2
 ),
 
---count of all active users
+-- count of all active users
 active_users AS
 (
 SELECT
@@ -84,3 +85,22 @@ FROM active_users
 	JOIN total_users ON total_users.experience = active_users.experience
 GROUP BY 1
 ORDER BY 2 DESC
+
+
+-- Pie chart activated vs not activated
+
+WITH counts AS
+(
+SELECT
+        SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) AS activated,
+        SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) AS not_activated,
+        count(account_id) as count_id
+FROM
+		member_a
+)
+
+SELECT
+		FORMAT(activated/count_id,2) AS activated_percent,
+		FORMAT(not_activated/count_id,2) AS not_activated_percent
+FROM
+		counts
