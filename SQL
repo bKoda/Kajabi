@@ -47,7 +47,7 @@ GROUP BY 1;
 
 -- Active users by experience
 
---all users by experience
+-- all users by experience
 WITH total_users AS (
 
 SELECT
