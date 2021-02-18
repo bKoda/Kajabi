@@ -9,9 +9,9 @@ update member_a set cancel_date = str_to_date(cancel_date, '%Y-%m-%d');
 WITH activations AS 
 (
 SELECT
-	MIN(created_date) as month,
-        SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) as activated,
-        SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) as not_activated
+	MIN(created_date) AS month,
+        SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) AS activated,
+        SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) AS not_activated
 FROM
 	member_a
 GROUP BY 
