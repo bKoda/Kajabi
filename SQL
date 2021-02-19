@@ -2,7 +2,7 @@
 update member_a set cancel_date = NULL where cancel_date = '';
 update member_a set cancel_date = str_to_date(cancel_date, '%Y-%m-%d');
 
-
+-- Improving Activation Rate - Trial Length
 -- Trials and Activation %
 
 -- counting activated vs non activated accs
@@ -45,10 +45,9 @@ ORDER BY MONTH(activations.month);
 
 
 
-
+-- Improving Activation Rate - Experience
 -- Active users by experience
 
--- all users by experience
 WITH total_users AS (
 
 SELECT
@@ -195,3 +194,22 @@ FROM
 ) AS table_1
 GROUP BY 2,3
 ORDER BY days_as_trial + 0
+
+
+-- Not bucket
+
+
+SELECT
+		count(account_id) AS num_accounts,
+        trial_days,
+        activated
+FROM (
+SELECT
+		datediff(initial_trial_end_date, created_date) AS trial_days,
+        account_id,
+        has_activated AS activated
+FROM 
+		member_a
+        ) as table_1
+grOUP by 2,3
+order by 3,2
