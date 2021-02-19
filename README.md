@@ -2,7 +2,7 @@
 Data analyst project
 
 
-75 rows of account found to be duplicates
+75 rows duplicates
  research why they are being duplicated
  
  assumed if trial activity mins was empty then it would be 0
