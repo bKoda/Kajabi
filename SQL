@@ -194,4 +194,4 @@ FROM
 		trial_days_per_acc
 ) AS table_1
 GROUP BY 2,3
-ORDER BY 2
+ORDER BY days_as_trial + 0
