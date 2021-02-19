@@ -121,4 +121,45 @@ SELECT
 		FORMAT(activated/count_id,2) AS activated_percent,
 		FORMAT(not_activated/count_id,2) AS not_activated_percent
 FROM
-		counts
+		counts;
+
+
+-- Lifetime of accounts
+
+WITH active_months AS (
+ 
+SELECT
+		cancel_month - created_month as month_active,
+        account_id
+FROM 
+(
+		SELECT
+				MONTH(created_date) AS created_month,
+                MONTH(cancel_date) AS cancel_month,
+                account_id
+        FROM
+				member_a
+		WHERE YEAR(cancel_date) NOT LIKE '2021%'
+        AND has_activated like 'No'
+) as months_active_per_account
+)
+
+SELECT
+		COUNT(account_id) as accounts,
+        month_active as months_active
+FROM 
+		active_months
+GROUP BY 2
+ORDER BY 2
+;
+
+
+-- Average Logins by activation
+
+SELECT
+        AVG(CASE WHEN has_activated LIKE 'Yes' THEN trial_logins ELSE NULL END) AS activated,
+        AVG(CASE WHEN has_activated LIKE 'No' THEN trial_logins ELSE NULL END) AS not_activated
+FROM
+		member_a
+WHERE 
+		trial_logins < 1500
