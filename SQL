@@ -104,3 +104,21 @@ SELECT
 		FORMAT(not_activated/count_id,2) AS not_activated_percent
 FROM
 		counts
+
+-- Activated vs Not activated
+
+WITH counts AS
+(
+SELECT
+        SUM(CASE WHEN has_activated like 'Yes' THEN 1 ELSE 0 END) AS activated,
+        SUM(CASE WHEN has_activated like 'No' THEN 1 ELSE 0 END) AS not_activated,
+        count(account_id) as count_id
+FROM
+		member_a
+)
+
+SELECT
+		FORMAT(activated/count_id,2) AS activated_percent,
+		FORMAT(not_activated/count_id,2) AS not_activated_percent
+FROM
+		counts
