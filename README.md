@@ -1,11 +1,12 @@
 # Kajabi
 Data analyst project
 
+Changed table name data_analyst_challenge to member_a
 
-75 rows duplicates
- research why they are being duplicated
+75 rows duplicated
+ --research why they are being duplicated
  
- Assumed if trial activity mins was NULL then it would be 0
+Assumed if trial activity mins was NULL then it would be 0
  
  
  Assumed if NULL then no for columns created_offer_durring_trial and uploaded_video_durring_trial
