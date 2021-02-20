@@ -42,51 +42,7 @@ ORDER BY MONTH(activations.month);
 
 
 
-
-
-
--- Improving Activation Rate - Experience
--- Active users by experience
-
-WITH total_users AS (
-
-SELECT
-	count(account_id) AS num_users,
-        experience
-FROM 
-	member_a
-WHERE 
-	experience NOT LIKE ''
-GROUP BY
-	2
-),
-
--- count of all active users
-active_users AS
-(
-SELECT
-	count(account_id) AS num_users,
-        experience
-FROM 
-	member_a
-WHERE 
-	experience NOT LIKE '' -- should be IS NOT NULL
-        AND has_activated LIKE 'Yes'
-GROUP BY
-	2
-)
-
-SELECT
-	active_users.experience,
-        (active_users.num_users / total_users.num_users ) AS percent_active_users,
-        active_users.num_users
-FROM active_users
-	JOIN total_users ON total_users.experience = active_users.experience
-GROUP BY 1
-ORDER BY 2 DESC
-
-
--- Pie chart activated vs not activated
+-- 100% stacked activated vs not activated
 
 WITH counts AS
 (
@@ -123,80 +79,7 @@ FROM
 		counts;
 
 
--- Lifetime of accounts
-
-WITH active_months AS (
- 
-SELECT
-		cancel_month - created_month as month_active,
-        account_id
-FROM 
-(
-		SELECT
-				MONTH(created_date) AS created_month,
-                MONTH(cancel_date) AS cancel_month,
-                account_id
-        FROM
-				member_a
-		WHERE YEAR(cancel_date) NOT LIKE '2021%'
-        AND has_activated like 'No'
-) as months_active_per_account
-)
-
-SELECT
-		COUNT(account_id) as accounts,
-        month_active as months_active
-FROM 
-		active_months
-GROUP BY 2
-ORDER BY 2
-;
-
-
--- Average Logins by activation
-
-SELECT
-        AVG(CASE WHEN has_activated LIKE 'Yes' THEN trial_logins ELSE NULL END) AS activated,
-        AVG(CASE WHEN has_activated LIKE 'No' THEN trial_logins ELSE NULL END) AS not_activated
-FROM
-		member_a
-WHERE 
-		trial_logins < 1500
-
--- Calculate days from created date to trial ended
-WITH trial_days_per_acc AS 
-(
-SELECT
-		datediff(initial_trial_end_date, created_date) AS trial_days,
-        account_id,
-        has_activated AS activated
-FROM 
-		member_a
-)
-SELECT
-		count(account_id) AS number_of_accounts,
-        bucket_trial_days AS days_as_trial,
-        activated
-FROM
--- Bucket trial period segments
-(
-SELECT
-		account_id,
-        activated,
-		CASE 
-        WHEN trial_days >= 28 THEN '28+ days'
-        WHEN trial_days >= 8 THEN '8-27 days'
-        WHEN trial_days >= 1 THEN '1-7 days'
-        ELSE '0 days'
-        END bucket_trial_days
-FROM
-		trial_days_per_acc
-) AS table_1
-GROUP BY 2,3
-ORDER BY days_as_trial + 0
-
-
--- Not bucket
+-- Trial Days
 
 
 SELECT
@@ -213,3 +96,37 @@ FROM
         ) as table_1
 grOUP by 2,3
 order by 3,2
+
+
+
+-- Activation by Sign up Source
+
+SELECT
+		sum(count_acc) OVER( PARTITION BY signup_source ORDER BY month) as running_total,
+		  signup_source,
+          month
+FROM
+(
+SELECT
+count(account_id) AS count_acc,
+		  signup_source,
+          month(created_date) as month
+FROM member_a
+where 
+		has_activated like 'yes'
+        and signup_source not like ''
+group by 2,3) as table_1;
+
+
+order by 2,3
+
+--- Activation rate of feature usage
+SELECT
+		count(account_id) AS count_acc,
+        has_activated,
+        uploaded_video_durring_trial
+FROM
+		member_a
+GROUP BY 2,3
+ORDER BY 3 DESC
+;
