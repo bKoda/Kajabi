@@ -13,4 +13,5 @@ Data analyst project
 Canceled dates filtered > jan 2021. An account is not considered churned until canceled date = now() because there is time to win back the customer.
 
 Accounts canceled 4+ months and not activated. Data seems off.
+
 5 accounts with logins way beyond outlier.
