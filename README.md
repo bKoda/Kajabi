@@ -5,7 +5,7 @@ Data analyst project
 75 rows duplicates
  research why they are being duplicated
  
- assumed if trial activity mins was empty then it would be 0
+ Assumed if trial activity mins was NULL then it would be 0
  
  
  Assumed if NULL then no for columns created_offer_durring_trial and uploaded_video_durring_trial
